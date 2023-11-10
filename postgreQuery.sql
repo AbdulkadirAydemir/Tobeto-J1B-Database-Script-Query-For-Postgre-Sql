@@ -71,3 +71,80 @@ select product_name, unit_price, unit_price * 1.18 as unit_price_kdv from Produc
 
 --25. En çok satılan ürününün adı, kategorisinin adı ve tedarikçisinin adı
  select products.product_name,categories.category_name,suppliers.company_name from products JOIN categories on products.category_id= categories.category_id JOIN suppliers on products.supplier_id= suppliers.supplier_id order by units_on_order desc LIMIT 1;
+
+--26. Stokta bulunmayan ürünlerin ürün listesiyle birlikte tedarikçilerin ismi ve iletişim numarasını (`ProductID`, `ProductName`, `CompanyName`, `Phone`) almak için bir sorgu yazın.
+select p.product_id, p.product_name, s.company_name, s.phone from products p
+join suppliers s on p.supplier_id = s.supplier_id
+where p.units_in_stock = 0;
+
+--27. 1998 yılı mart ayındaki siparişlerimin adresi, siparişi alan çalışanın adı, çalışanın soyadı?
+select o.order_id, o.order_date, c.customer_id, c.address, concat(e.first_name,' ',e.last_name) as employee_name from orders o
+join customers c on o.customer_id = c.customer_id
+join employees e on o.employee_id = e.employee_id
+where extract(year from o.order_date) = 1998 and extract(month from o.order_date) = 3;
+ 
+--28. 1997 yılı şubat ayında kaç siparişim var?
+select count(order_id) as order_count from orders
+where extract(year from order_date) = 1997 and extract(month from order_date) = 2;
+
+--29. London şehrinden 1998 yılında kaç siparişim var?
+select count(o.order_id) as order_count from orders o
+join customers c on o.customer_id = c.customer_id
+where extract(year from o.order_date) = 1998 and c.city = 'London';
+
+--30. 1997 yılında sipariş veren müşterilerimin contactname ve telefon numarası?
+select distinct c.contact_name, c.phone from customers c
+join orders o on c.customer_id = o.customer_id
+where extract(year from o.order_date) = 1997;
+
+--31. Taşıma ücreti 40 üzeri olan siparişlerim?
+select * from orders
+where freight > 40;
+
+--32. Taşıma ücreti 40 ve üzeri olan siparişlerimin şehri, müşterisinin adı?
+select c.city, c.contact_name from orders o
+join customers c on o.customer_id = c.customer_id
+where o.freight >= 40;
+
+--33. 1997 yılında verilen siparişlerin tarihi, şehri, çalışan adı -soyadı ( ad soyad birleşik olacak ve büyük harf)?
+select o.order_date, c.city, concat(upper(e.first_name), upper(e.last_name)) as employee_name from orders o
+join customers c on o.customer_id = c.customer_id
+join employees e on o.employee_id = e.employee_id
+where extract(year from o.order_date) = 1997;
+ 
+--34. 1997 yılında sipariş veren müşterilerin contactname'i, ve telefon numaraları ( telefon formatı 2223322 gibi olmalı )
+select c.contact_name, regexp_replace(c.phone, '[^0-9]', '', 'g') as phone_number from customers c 
+join orders o on c.customer_id = o.customer_id
+where extract(year from o.order_date) = 1997;
+
+--35. Sipariş tarihi, müşteri contact name, çalışan ad, çalışan soyadı?
+select o.order_date, c.contact_name, e.first_name as emp_first_name, e.last_name as emp_last_name from orders o
+join customers c on o.customer_id = c.customer_id
+join employees e on o.employee_id = e.employee_id;
+
+--36. Geciken siparişlerim?
+select order_id, order_date, required_date, shipped_date from orders
+where shipped_date is null and required_date < current_date;
+ 
+--37. Geciken siparişlerimin tarihi, müşterisinin adı? 
+select o.order_date, c.contact_name from orders o
+join customers c on o.customer_id = c.customer_id
+where o.shipped_date is null and o.required_date < current_date; 
+
+--38. 10248 nolu siparişte satılan ürünlerin adı, kategorisinin adı, adedi nedir?
+select p.product_name, c.category_name, od.quantity from order_details od
+join products p on od.product_id = p.product_id
+join categories c on p.category_id = c.category_id
+where od.order_id = 10248;
+
+--39. 10248 nolu siparişin ürünlerinin adı , tedarikçi adı nedir?
+select p.product_name, s.company_name from order_details od
+join products p on od.product_id = p.product_id
+join suppliers s on p.supplier_id = s.supplier_id
+where od.order_id = 10248;
+
+--40. 3 numaralı ID ye sahip çalışanın 1997 yılında sattığı ürünlerin adı ve adeti nedir?
+select p.product_name, od.quantity from orders o
+join order_details od on o.order_id = od.order_id
+join products p on od.product_id = p.product_id
+where o.employee_id = 3 and extract(year from o.order_date) = 1997;
