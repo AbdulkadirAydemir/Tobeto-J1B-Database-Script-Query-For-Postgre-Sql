@@ -64,13 +64,17 @@ select product_name, unit_price, unit_price * 1.18 as unit_price_kdv from Produc
  select products.product_name,categories.category_name from products JOIN categories ON products.category_id = categories.category_id;
 
 --23. Ürünlerin kategorilerine göre fiyat ortalamasını almak için bir sorgu yazın.
- select categories.category_name,AVG(products.unit_price) as avg_price from products JOIN categories on products.category_id = categories.category_id GROUP BY categories.category_name;
+ select categories.category_name,AVG(products.unit_price) as avg_price from products 
+ JOIN categories on products.category_id = categories.category_id GROUP BY categories.category_name;
 
 --24. En pahalı ürünümün adı, fiyatı ve kategorisin adı nedir?
- select products.product_name,products.unit_price,categories.category_name from products JOIN categories on products.category_id= categories.category_id order by products.unit_price desc LIMIT 1;
+ select products.product_name,products.unit_price,categories.category_name from products 
+ JOIN categories on products.category_id= categories.category_id order by products.unit_price desc LIMIT 1;
 
 --25. En çok satılan ürününün adı, kategorisinin adı ve tedarikçisinin adı
- select products.product_name,categories.category_name,suppliers.company_name from products JOIN categories on products.category_id= categories.category_id JOIN suppliers on products.supplier_id= suppliers.supplier_id order by units_on_order desc LIMIT 1;
+ select products.product_name,categories.category_name,suppliers.company_name from products 
+ JOIN categories on products.category_id= categories.category_id 
+ JOIN suppliers on products.supplier_id= suppliers.supplier_id order by units_on_order desc LIMIT 1;
 
 --26. Stokta bulunmayan ürünlerin ürün listesiyle birlikte tedarikçilerin ismi ve iletişim numarasını (`ProductID`, `ProductName`, `CompanyName`, `Phone`) almak için bir sorgu yazın.
 select p.product_id, p.product_name, s.company_name, s.phone from products p
