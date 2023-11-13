@@ -31,7 +31,8 @@ select product_name, unit_price, unit_price * 1.18 as unit_price_kdv from Produc
 --11. Ürünlerin adını tamamen küçültüp fiyat sırasına göre tersten listele
  select lower(product_name) ,unit_price from Products order by unit_price desc;
 
---12. Çalışanların ad ve soyadlarını yanyana gelecek şekilde yazdır select first_name || ' ' || last_name as full_name from employees;
+--12. Çalışanların ad ve soyadlarını yanyana gelecek şekilde yazdır 
+ select first_name || ' ' || last_name as full_name from employees;
 
 --13. Region alanı NULL olan kaç tedarikçim var?
  select count(*) from suppliers where region is null;
